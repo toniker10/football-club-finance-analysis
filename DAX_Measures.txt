@@ -1,0 +1,48 @@
+// DAX measures of the Power BI report (21 measures, all stored in the table _Measures).
+// Source: Football_Club_Finance_Dataset.xlsx, tables tbl_Revenue, tbl_Expenses, tbl_Staff, tbl_Players, tbl_Travel, tbl_Match_Costs, tbl_Team_Info.
+
+// ---------- Overview ----------
+Total Revenue = SUM ( tbl_Revenue[Amount_EUR] )
+
+Total Expenses = SUM ( tbl_Expenses[Total_Cost_EUR] )
+
+Net Result = [Total Revenue] - [Total Expenses]
+
+Net Margin % = DIVIDE ( [Net Result], [Total Revenue] )
+
+Net Result if Largest Source Lost = [Net Result] - MAXX ( ALL ( tbl_Revenue[Revenue_Source] ), [Total Revenue] )
+
+Season Months = MAX ( tbl_Team_Info[Season_Months] )
+
+Expenses per Month = DIVIDE ( [Total Expenses], [Season Months] )
+
+Reserve in Months of Expenses = DIVIDE ( [Net Result], [Expenses per Month] )
+
+// ---------- Revenue ----------
+Revenue Share % = DIVIDE ( [Total Revenue], CALCULATE ( [Total Revenue], ALL ( tbl_Revenue[Revenue_Source] ) ) )
+
+Top 2 Revenue Sources Share = DIVIDE ( SUMX ( TOPN ( 2, ALL ( tbl_Revenue[Revenue_Source] ), [Total Revenue] ), [Total Revenue] ), CALCULATE ( [Total Revenue], ALL ( tbl_Revenue[Revenue_Source] ) ) )
+
+Active Revenue Sources = COUNTROWS ( FILTER ( ALL ( tbl_Revenue[Revenue_Source] ), [Total Revenue] > 0 ) )
+
+// ---------- Expenses ----------
+Expense Share % = DIVIDE ( [Total Expenses], CALCULATE ( [Total Expenses], ALL ( tbl_Expenses[Expense_Category] ) ) )
+
+Top 3 Expense Categories Share = DIVIDE ( SUMX ( TOPN ( 3, ALL ( tbl_Expenses[Expense_Category] ), [Total Expenses] ), [Total Expenses] ), CALCULATE ( [Total Expenses], ALL ( tbl_Expenses[Expense_Category] ) ) )
+
+Payroll Cost = SUM ( tbl_Staff[Total_Season_Cost_EUR] ) + SUM ( tbl_Players[Total_Season_Cost_EUR] )
+
+Payroll Share of Expenses = DIVIDE ( [Payroll Cost], [Total Expenses] )
+
+// ---------- Matches ----------
+League Matches = COUNTROWS ( tbl_Match_Costs )
+
+Total Match Cost = SUM ( tbl_Match_Costs[Total_Match_Cost_EUR] )
+
+Total Travel Cost = SUM ( tbl_Travel[Fuel_Cost_EUR] )
+
+Total Match Day Cost = [Total Match Cost] + [Total Travel Cost]
+
+Avg Match Day Cost = DIVIDE ( [Total Match Day Cost], [League Matches] )
+
+Total Vehicle KM = SUM ( tbl_Travel[Vehicle_KM] )
