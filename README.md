@@ -97,7 +97,6 @@ football-club-finance/
     ├── Football_Club_Finance.pbix
     ├── DAX_Measures.txt
     └── screenshots/
-```
 
 ## How to run it
 
